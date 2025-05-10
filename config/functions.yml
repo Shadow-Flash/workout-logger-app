@@ -1,6 +1,6 @@
 CreateUserForWorkoutAppFunction:
   name: ${sls:stage}-create-user-for-workout-app
-  handler: index.handler
+  handler: ../src/functions/createUserForWorkoutApp/index.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
@@ -10,7 +10,7 @@ CreateUserForWorkoutAppFunction:
 
 GetWorkoutListFunction:
   name: ${sls:stage}-get-workout-list
-  handler: index.handler
+  handler: ../src/functions/getWorkoutList/index.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
@@ -18,19 +18,9 @@ GetWorkoutListFunction:
         path: /{id}/all
         method: get
 
-PostWorkoutRepAndSetFunction:
-  name: ${sls:stage}-post-workout-rep-set
-  handler: index.handler
-  layers:
-    - !Ref HelperResourcesLambdaLayer
-  events:
-    - httpApi:
-        path: /{id}/{name}/{data}
-        method: post
-
 PutWorkoutRepAndSetFunction:
   name: ${sls:stage}-put-workout-rep-set
-  handler: index.handler
+  handler: ../src/functions/putWorkoutRepAndSet/index.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
@@ -40,20 +30,10 @@ PutWorkoutRepAndSetFunction:
 
 DeleteWorkoutFunction:
   name: ${sls:stage}-delete-workout
-  handler: index.handler
+  handler: ../src/functions/deleteWorkout/index.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
     - httpApi:
         path: /{id}/{name}
-        method: delete
-
-DeleteWorkoutRepAndSetFunction:
-  name: ${sls:stage}-delete-workout-rep-set
-  handler: index.handler
-  layers:
-    - !Ref HelperResourcesLambdaLayer
-  events:
-    - httpApi:
-        path: /{id}/{name}/{data}
         method: delete

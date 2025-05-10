@@ -1,15 +1,15 @@
 service: workout-logger-app
 frameworkVersion: "3"
 
-provider: ${file(./serverless/provider.yml)}
+provider: ${file(./config/provider.yml)}
 
-plugins: ${file(./serverless/plugins.yml)}
+plugins: ${file(./config/plugins.yml)}
 
 package:
   individually: true
 
-layers: ${file(./serverless/layers.yml)}
+layers: ${file(./config/layers.yml)}
 
-functions: ${file(./serverless/functions.yml)}
+functions: ${file(./config/functions.yml)}
 
-resources: ${file(./serverless/resources.yml)}
+resources: ${file(./config/resources.yml)}

@@ -1,7 +1,9 @@
 name: aws
 runtime: nodejs20.x
-region:
-  ap-south-1
+region: ap-south-1
+environment:
+  TABLE_NAME: !Ref WorkoutLogTable
+  REGION: ${aws:region}
   # Not using this as you might need to deploy
   # deploymentBucket:
   #   name: ${sls:stage}-deployment-bucket

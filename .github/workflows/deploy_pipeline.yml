@@ -60,5 +60,5 @@ jobs:
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.2
         with:
-          args: -c "serverless plugin install --name serverless-esbuild && serverless deploy --stage=${{ env.STAGE }}"
+          args: -c "serverless plugin install --name serverless-esbuild && serverless deploy --stage=${{ env.STAGE }} --verbose"
           entrypoint: /bin/sh

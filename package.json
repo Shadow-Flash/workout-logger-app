@@ -12,6 +12,8 @@
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.26.0",
+    "@types/aws-lambda": "^8.10.149",
+    "aws-lambda": "^1.0.7",
     "eslint": "^9.26.0",
     "globals": "^16.1.0",
     "serverless-dynamodb-local": "^0.2.40",
@@ -20,8 +22,5 @@
     "serverless-plugin-typescript": "^2.1.5",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.0"
-  },
-  "dependencies": {
-    "aws-lambda": "^1.0.7"
   }
 }
