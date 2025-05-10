@@ -35,7 +35,7 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1.7.0
         with:
-          role-to-assume: ${{ github.env.ROLE }}
+          role-to-assume: ${{ env.ROLE }}
           role-session-name: GitHub_to_AWS_via_FederatedOIDC
           aws-region: ${{ env.AWS_REGION }}
 
@@ -44,5 +44,5 @@ jobs:
       - name: Install Plugin and Deploy
         uses: serverless/github-action@v3.2
         with:
-          args: -c "serverless plugin install --name serverless-esbuild && serverless deploy --stage=${{ github.env.STAGE }}"
+          args: -c "serverless plugin install --name serverless-esbuild && serverless deploy --stage=${{ env.STAGE }}"
           entrypoint: /bin/sh
