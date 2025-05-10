@@ -1,0 +1,8 @@
+name: aws
+runtime: nodejs20.x
+region:
+  ap-south-1
+  # Not using this as you might need to deploy
+  # deploymentBucket:
+  #   name: ${sls:stage}-deployment-bucket
+  #   blockPublicAccess: true

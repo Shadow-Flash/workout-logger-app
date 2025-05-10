@@ -1,0 +1,19 @@
+Resources:
+  WorkoutLogTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${sls:stage}-workout-log-table
+      AttributeDefinitions:
+        - AttributeName: "UserId"
+          AttributeType: "N"
+        - AttributeName: "Date"
+          AttributeType: "S"
+        - AttributeName: "Exercise"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "UserId"
+          KeyType: "HASH"
+        - AttributeName: "Date"
+          KeyType: "RANGE"
+      BillingMode: PAY_PER_REQUEST
+      DeletionProtectionEnabled: true

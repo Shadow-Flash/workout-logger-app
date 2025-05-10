@@ -1,0 +1,8 @@
+HelperResources:
+  path: layer/nodejs
+  name: ${sls:stage}-lambda-layer
+  description: It contains all the necessary helper functions and packages
+  compatibleRuntimes:
+    - nodejs20.x
+  compatibleArchitectures:
+    - arm64
