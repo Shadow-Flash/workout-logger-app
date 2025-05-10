@@ -1,0 +1,48 @@
+name: Deploy to AWS
+on:
+  push:
+    branches:
+      - main
+      - dev
+
+env:
+  AWS_REGION: ap-south-1
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Set deployment stage
+        id: set-stage
+        run: |
+          if [[ ${{ github.ref_name }} == 'main' ]]; then
+            echo "STAGE=prod" >> $GITHUB_ENV
+            echo "ROLE=arn:aws:iam::797098543009:role/varun-github-access-role" >> $GITHUB_ENV
+          else
+            echo "STAGE=dev" >> $GITHUB_ENV
+            echo "ROLE=arn:aws:iam::797098543009:role/varun-github-access-role" >> $GITHUB_ENV
+          fi
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1.7.0
+        with:
+          role-to-assume: ${{ github.env.ROLE }}
+          role-session-name: GitHub_to_AWS_via_FederatedOIDC
+          aws-region: ${{ env.AWS_REGION }}
+
+      - run: npm ci
+
+      - name: Install Plugin and Deploy
+        uses: serverless/github-action@v3.2
+        with:
+          args: -c "serverless plugin install --name serverless-esbuild && serverless deploy --stage=${{ github.env.STAGE }}"
+          entrypoint: /bin/sh
