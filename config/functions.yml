@@ -1,6 +1,6 @@
 CreateUserForWorkoutAppFunction:
   name: ${sls:stage}-create-user-for-workout-app
-  handler: ../src/functions/createUserForWorkoutApp/index.handler
+  handler: ../src/functions/createUserForWorkoutApp.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
@@ -10,7 +10,7 @@ CreateUserForWorkoutAppFunction:
 
 GetWorkoutListFunction:
   name: ${sls:stage}-get-workout-list
-  handler: ../src/functions/getWorkoutList/index.handler
+  handler: ../src/functions/getWorkoutList.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
@@ -20,7 +20,7 @@ GetWorkoutListFunction:
 
 PutWorkoutRepAndSetFunction:
   name: ${sls:stage}-put-workout-rep-set
-  handler: ../src/functions/putWorkoutRepAndSet/index.handler
+  handler: ../src/functions/putWorkoutRepAndSet.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
@@ -30,7 +30,7 @@ PutWorkoutRepAndSetFunction:
 
 DeleteWorkoutFunction:
   name: ${sls:stage}-delete-workout
-  handler: ../src/functions/deleteWorkout/index.handler
+  handler: ../src/functions/deleteWorkout.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
   events:
