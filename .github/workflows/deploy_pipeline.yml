@@ -3,10 +3,14 @@ on:
   push:
     branches:
       - main
-      - dev
+      - prod
 
 env:
   AWS_REGION: ap-south-1
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy:
@@ -25,10 +29,10 @@ jobs:
         id: set-stage
         run: |
           if [[ ${{ github.ref_name }} == 'main' ]]; then
-            echo "STAGE=prod" >> $GITHUB_ENV
+            echo "STAGE=dev" >> $GITHUB_ENV
             echo "ROLE=arn:aws:iam::797098543009:role/varun-github-access-role" >> $GITHUB_ENV
           else
-            echo "STAGE=dev" >> $GITHUB_ENV
+            echo "STAGE=prod" >> $GITHUB_ENV
             echo "ROLE=arn:aws:iam::797098543009:role/varun-github-access-role" >> $GITHUB_ENV
           fi
 
