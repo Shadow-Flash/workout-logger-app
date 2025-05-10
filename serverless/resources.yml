@@ -8,8 +8,6 @@ Resources:
           AttributeType: "N"
         - AttributeName: "Date"
           AttributeType: "S"
-        - AttributeName: "Exercise"
-          AttributeType: "S"
       KeySchema:
         - AttributeName: "UserId"
           KeyType: "HASH"
