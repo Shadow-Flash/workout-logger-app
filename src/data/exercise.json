@@ -3,48 +3,48 @@
     "sets": 4,
     "reps": 8,
     "weight": 60,
-    "metric": "kgs"
+    "metric": "KGS"
   },
   "deadlift": {
     "sets": 3,
     "reps": 5,
     "weight": 100,
-    "metric": "kgs"
+    "metric": "KGS"
   },
   "bench-press": {
     "sets": 4,
     "reps": 10,
     "weight": 50,
-    "metric": "kgs"
+    "metric": "KGS"
   },
   "overhead-press": {
     "sets": 3,
     "reps": 8,
     "weight": 30,
-    "metric": "kgs"
+    "metric": "KGS"
   },
   "pull-up": {
     "sets": 3,
     "reps": 12,
     "weight": 0,
-    "metric": "bodyweight"
+    "metric": "BODYWEIGHT"
   },
   "barbell-row": {
     "sets": 3,
     "reps": 10,
     "weight": 40,
-    "metric": "kgs"
+    "metric": "KGS"
   },
   "lunges": {
     "sets": 3,
     "reps": 10,
     "weight": 12,
-    "metric": "kgs"
+    "metric": "KGS"
   },
   "burpees": {
     "sets": 3,
     "reps": 15,
     "weight": 0,
-    "metric": "bodyweight"
+    "metric": "BODYWEIGHT"
   }
 }

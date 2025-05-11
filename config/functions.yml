@@ -25,6 +25,7 @@ PutWorkoutRepAndSetFunction:
   handler: src/functions/putWorkoutRepAndSet.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
+  role: PutWorkoutRepAndSetFunctionRole
   events:
     - httpApi:
         path: /{id}

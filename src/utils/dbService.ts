@@ -73,10 +73,10 @@ export async function createUserData(
  */
 export async function addWorkoutLog(
   data: WorkoutLogItem
-): Promise<UpdateItemCommandOutput> {
+): Promise<UpdateItemCommandOutput["Attributes"]> {
   const params: UpdateItemCommandInput = {
     TableName: tableName,
-    ConditionExpression: `attribute_exists(${data.userId})`,
+    ConditionExpression: "attribute_exists(UserId)",
     Key: marshall({
       UserId: data.userId,
       Date: getFormattedDate(),
@@ -85,7 +85,7 @@ export async function addWorkoutLog(
       "#WP": "WorkoutPlan",
     },
     ExpressionAttributeValues: marshall({
-      ":wp": `${data.workoutPlan}`,
+      ":wp": data.workoutPlan,
     }),
     UpdateExpression: `
       SET #WP = :wp 
@@ -94,7 +94,11 @@ export async function addWorkoutLog(
   };
 
   try {
-    return await client.send(new UpdateItemCommand(params));
+    const data = await client.send(new UpdateItemCommand(params));
+    if (!data.Attributes) {
+      throw new Error("No attributes returned from update operation");
+    }
+    return unmarshall(data.Attributes);
   } catch (error) {
     logger.error({ message: "Error adding workout log to DynamoDB:", error });
     throw new Error(error as string);
