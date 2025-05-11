@@ -3,9 +3,10 @@ CreateUserForWorkoutAppFunction:
   handler: src/functions/createUserForWorkoutApp.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
+  role: CreateUserFunctionRole
   events:
     - httpApi:
-        path: /{data}
+        path: /user
         method: post
 
 GetWorkoutListFunction:
@@ -25,7 +26,7 @@ PutWorkoutRepAndSetFunction:
     - !Ref HelperResourcesLambdaLayer
   events:
     - httpApi:
-        path: /{id}/{name}/{data}
+        path: /{id}
         method: put
 
 DeleteWorkoutFunction:
@@ -35,5 +36,5 @@ DeleteWorkoutFunction:
     - !Ref HelperResourcesLambdaLayer
   events:
     - httpApi:
-        path: /{id}/{name}
+        path: /{id}
         method: delete

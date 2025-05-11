@@ -1,6 +1,8 @@
 name: aws
 runtime: nodejs20.x
 region: ap-south-1
+httpApi:
+  cors: true
 environment:
   TABLE_NAME: !Ref WorkoutLogTable
   REGION: ${aws:region}

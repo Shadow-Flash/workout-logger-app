@@ -5,7 +5,7 @@ Resources:
       TableName: ${sls:stage}-workout-log-table
       AttributeDefinitions:
         - AttributeName: "UserId"
-          AttributeType: "N"
+          AttributeType: "S"
         - AttributeName: "Date"
           AttributeType: "S"
       KeySchema:
@@ -14,4 +14,38 @@ Resources:
         - AttributeName: "Date"
           KeyType: "RANGE"
       BillingMode: PAY_PER_REQUEST
-      DeletionProtectionEnabled: true
+      # Good to have, but commenting out right now
+      # so it can be easily deleted from
+      # cloudformation stack
+      # DeletionProtectionEnabled: true
+
+  CreateUserFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ${sls:stage}-create-user-function-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ${sls:stage}-create-user-dynamodb-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                Resource: !GetAtt WorkoutLogTable.Arn
+        - PolicyName: ${sls:stage}-create-user-log-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-create-user-for-workout-app:*

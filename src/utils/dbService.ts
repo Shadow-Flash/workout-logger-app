@@ -15,6 +15,7 @@ import {
   DeleteItemCommandOutput,
 } from "@aws-sdk/client-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
+import { nanoid } from "nanoid";
 import { logger } from "./logger";
 import sampleExerciseData from "../data/exercise.json";
 
@@ -34,8 +35,7 @@ interface UserDataItem {
   dob: string;
 }
 
-const getFormattedDate = () => new Date().toLocaleDateString("en-US");
-
+const getFormattedDate = () => new Date().toISOString().split("T")[0];
 /**
  * Create a new user to the DynamoDB table
  * @param userData The user data item to add to the table
@@ -43,25 +43,26 @@ const getFormattedDate = () => new Date().toLocaleDateString("en-US");
  */
 export async function createUserData(
   userData: UserDataItem
-): Promise<PutItemCommandOutput> {
+): Promise<PutItemCommandOutput & { uId: string }> {
+  const uId = nanoid(8);
   const params: PutItemCommandInput = {
     TableName: tableName,
     Item: marshall({
-      UserId: `${Math.floor(1000 + Math.random() * 9000)}`,
+      UserId: uId,
       Date: getFormattedDate(),
       DateOfBirth: userData.dob,
       FullName: userData.fullName,
       Gender: userData.gender,
       WorkoutPlan: sampleExerciseData,
     }),
-    ReturnValues: "ALL_NEW",
   };
 
   try {
-    return await client.send(new PutItemCommand(params));
+    const data = await client.send(new PutItemCommand(params));
+    return { ...data, uId };
   } catch (error) {
-    logger.error("Error creating new user to DynamoDB:", error);
-    throw new Error(JSON.stringify(error));
+    logger.error({ message: "Error creating new user to DynamoDB:", error });
+    throw new Error(error);
   }
 }
 
@@ -95,8 +96,8 @@ export async function addWorkoutLog(
   try {
     return await client.send(new UpdateItemCommand(params));
   } catch (error) {
-    logger.error("Error adding workout log to DynamoDB:", error);
-    throw new Error(JSON.stringify(error));
+    logger.error({ message: "Error adding workout log to DynamoDB:", error });
+    throw new Error(error);
   }
 }
 
@@ -127,8 +128,11 @@ export async function getWorkoutList(
 
     return unmarshall(Item) as WorkoutLogItem;
   } catch (error) {
-    logger.error("Error getting workout log from DynamoDB:", error);
-    throw new Error(JSON.stringify(error));
+    logger.error({
+      message: "Error getting workout log from DynamoDB:",
+      error,
+    });
+    throw new Error(error);
   }
 }
 
@@ -150,7 +154,7 @@ export async function deleteUserData(userId: string) {
     const queryResult = await client.send(new QueryCommand(params));
 
     if (!queryResult.Items || queryResult.Items.length === 0) {
-      logger.info("No user found to delete.");
+      logger.info({ message: "No user found to delete." });
       throw new Error(`User with UserId: ${userId} not Found!!`);
     }
 
@@ -181,16 +185,18 @@ export async function deleteUserData(userId: string) {
       const unmarshalledItem = item ? unmarshall(item) : undefined;
       const skDate: string = unmarshalledItem?.Date ?? "unknown";
       if (result.status === "fulfilled") {
-        logger.info(`Deleted record with date: ${skDate}`);
+        logger.info({ message: `Deleted record with date: ${skDate}` });
       } else {
-        logger.error(
-          `Failed to delete record with date ${skDate}`,
-          result.reason
-        );
+        logger.error({
+          message: `Failed to delete record with date ${skDate}`,
+          error: result.reason,
+        });
       }
     });
 
-    logger.info(`Delete operation completed for userID: ${userId}.`);
+    logger.info({
+      message: `Delete operation completed for userID: ${userId}.`,
+    });
   } catch (error) {
     throw new Error(
       JSON.stringify({

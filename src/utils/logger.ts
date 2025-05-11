@@ -1,19 +1,19 @@
 const isDev = process.env.NODE_ENV !== "production";
 
 export const logger = {
-  info: (...args: unknown[]) => {
-    if (isDev) console.info("[INFO]", ...args);
+  info: (args: object) => {
+    console.info("[INFO]", JSON.stringify(args, null, 2));
   },
 
-  warn: (...args: unknown[]) => {
-    console.warn("[WARN]", ...args);
+  warn: (args: object) => {
+    console.warn("[WARN]", args);
   },
 
-  error: (...args: unknown[]) => {
-    console.error("[ERROR]", ...args);
+  error: (args: object) => {
+    console.error("[ERROR]", args);
   },
 
-  debug: (...args: unknown[]) => {
-    if (isDev) console.debug("[DEBUG]", ...args);
+  debug: (args: object) => {
+    if (isDev) console.debug("[DEBUG]", args);
   },
 };
