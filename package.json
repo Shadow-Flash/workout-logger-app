@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Basic CRUD API for logging daily workouts",
   "type": "module",
+  "main": "index.js",
   "scripts": {
     "deploy": "eslint && sls deploy -s dev --verbose",
     "validate": "eslint && sls print -s dev",
