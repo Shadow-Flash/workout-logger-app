@@ -62,7 +62,7 @@ export async function createUserData(
     return { ...data, uId };
   } catch (error) {
     logger.error({ message: "Error creating new user to DynamoDB:", error });
-    throw new Error(error);
+    throw new Error(error as string);
   }
 }
 
@@ -97,7 +97,7 @@ export async function addWorkoutLog(
     return await client.send(new UpdateItemCommand(params));
   } catch (error) {
     logger.error({ message: "Error adding workout log to DynamoDB:", error });
-    throw new Error(error);
+    throw new Error(error as string);
   }
 }
 
@@ -132,7 +132,7 @@ export async function getWorkoutList(
       message: "Error getting workout log from DynamoDB:",
       error,
     });
-    throw new Error(error);
+    throw new Error(error as string);
   }
 }
 
