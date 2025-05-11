@@ -24,6 +24,12 @@ const client = new DynamoDBClient({ region: process.env.REGION });
 const tableName = process.env.TABLE_NAME;
 
 // Define the workout log item structure based on your table schema
+interface WorkoutPlanItem {
+  userId: string;
+  workoutPlan: Record<string, Record<string, number | string>>;
+  date: string;
+}
+
 interface WorkoutLogItem {
   userId: string;
   workoutPlan: Record<string, Record<string, number | string>>;
@@ -72,14 +78,13 @@ export async function createUserData(
  * @returns The response from DynamoDB
  */
 export async function addWorkoutLog(
-  data: WorkoutLogItem
+  data: WorkoutPlanItem
 ): Promise<UpdateItemCommandOutput["Attributes"]> {
   const params: UpdateItemCommandInput = {
     TableName: tableName,
-    ConditionExpression: "attribute_exists(UserId)",
     Key: marshall({
       UserId: data.userId,
-      Date: getFormattedDate(),
+      Date: data.date,
     }),
     ExpressionAttributeNames: {
       "#WP": "WorkoutPlan",
@@ -168,7 +173,7 @@ export async function deleteUserData(userId: string) {
 
     const deletePromises: Array<Promise<DeleteItemCommandOutput | object>> =
       queryResult.Items.map((item) => {
-        const dateSk = item.Date;
+        const dateSk = item.Date.S;
         if (!dateSk)
           return Promise.resolve({
             status: "skipped",
@@ -206,11 +211,6 @@ export async function deleteUserData(userId: string) {
       message: `Delete operation completed for userID: ${userId}.`,
     });
   } catch (error) {
-    throw new Error(
-      JSON.stringify({
-        message: `Delete operation failed to delete for userId: ${userId}`,
-        error,
-      })
-    );
+    throw new Error(error as string);
   }
 }

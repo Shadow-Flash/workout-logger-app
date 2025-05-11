@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const userWorkoutSchema = z.object({
   id: z.string().length(8),
+  date: z.string().date(),
   workoutPlan: z.record(
     z.string().min(3),
     z.object({

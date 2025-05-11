@@ -20,15 +20,15 @@ GetWorkoutListFunction:
         path: /{id}/{date}
         method: get
 
-PutWorkoutRepAndSetFunction:
-  name: ${sls:stage}-put-workout-rep-set
-  handler: src/functions/putWorkoutRepAndSet.handler
+AddOrUpdateRepAndSetFunction:
+  name: ${sls:stage}-add-or-update-rep-set
+  handler: src/functions/addOrUpdateRepAndSet.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
-  role: PutWorkoutRepAndSetFunctionRole
+  role: AddOrUpdateRepAndSetFunctionRole
   events:
     - httpApi:
-        path: /{id}
+        path: /{id}/{date}
         method: put
 
 DeleteWorkoutFunction:
@@ -36,6 +36,7 @@ DeleteWorkoutFunction:
   handler: src/functions/deleteWorkout.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
+  role: DeleteWorkoutFunctionRole
   events:
     - httpApi:
         path: /{id}
