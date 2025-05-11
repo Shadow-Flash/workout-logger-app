@@ -31,7 +31,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: ${sls:stage}-create-user-dynamodb-policy
+        - PolicyName: ${sls:stage}-create-user-function-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -39,13 +39,36 @@ Resources:
                 Action:
                   - dynamodb:PutItem
                 Resource: !GetAtt WorkoutLogTable.Arn
-        - PolicyName: ${sls:stage}-create-user-log-policy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
               - Effect: Allow
                 Action:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
                 Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-create-user-for-workout-app:*
+
+  GetWorkoutListFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ${sls:stage}-get-workout-list-function-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ${sls:stage}-get-workout-list-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:GetItem
+                Resource: !GetAtt WorkoutLogTable.Arn
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-get-workout-list:*

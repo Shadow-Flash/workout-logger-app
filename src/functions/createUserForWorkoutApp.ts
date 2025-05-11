@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { userSchema } from "../schemas/userSchema";
+import { userDataSchema } from "../schemas/userDataSchema";
 import { response } from "../utils/response";
 import { logger } from "../utils/logger";
 import { createUserData } from "../utils/dbService";
@@ -12,7 +12,7 @@ export const handler = async (
 
   try {
     const body = JSON.parse(event.body);
-    const userData = userSchema.safeParse(body);
+    const userData = userDataSchema.safeParse(body);
 
     if (userData.success) {
       const data = await createUserData(userData.data);

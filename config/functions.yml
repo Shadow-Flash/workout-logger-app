@@ -14,9 +14,10 @@ GetWorkoutListFunction:
   handler: src/functions/getWorkoutList.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
+  role: GetWorkoutListFunctionRole
   events:
     - httpApi:
-        path: /{id}/all
+        path: /{id}/{date}
         method: get
 
 PutWorkoutRepAndSetFunction:

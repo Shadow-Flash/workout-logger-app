@@ -25,7 +25,7 @@ const tableName = process.env.TABLE_NAME;
 
 // Define the workout log item structure based on your table schema
 interface WorkoutLogItem {
-  userId: number;
+  userId: string;
   workoutPlan: Record<string, Record<string, number | string>>;
 }
 
@@ -108,7 +108,7 @@ export async function addWorkoutLog(
  * @returns The workout log from the table, or null if not found
  */
 export async function getWorkoutList(
-  userId: number,
+  userId: string,
   date: string
 ): Promise<WorkoutLogItem | null> {
   const params: GetItemCommandInput = {
@@ -117,16 +117,20 @@ export async function getWorkoutList(
       UserId: userId,
       Date: date,
     }),
+    ProjectionExpression: "WorkoutPlan",
   };
 
   try {
     const { Item } = await client.send(new GetItemCommand(params));
-
     if (!Item) {
-      return null;
+      logger.error({ message: "No Data Present !!" });
+      throw new Error("No Data Present !!");
     }
-
-    return unmarshall(Item) as WorkoutLogItem;
+    const data: WorkoutLogItem = {
+      workoutPlan: unmarshall(Item).WorkoutPlan,
+      userId,
+    };
+    return data;
   } catch (error) {
     logger.error({
       message: "Error getting workout log from DynamoDB:",
