@@ -31,6 +31,17 @@ AddOrUpdateRepAndSetFunction:
         path: /{id}/{date}
         method: put
 
+DeleteAllWorkoutsFunction:
+  name: ${sls:stage}-delete-all-workouts
+  handler: src/functions/deleteAllWorkouts.handler
+  layers:
+    - !Ref HelperResourcesLambdaLayer
+  role: DeleteAllWorkoutsFunctionRole
+  events:
+    - httpApi:
+        path: /{id}
+        method: delete
+
 DeleteWorkoutFunction:
   name: ${sls:stage}-delete-workout
   handler: src/functions/deleteWorkout.handler
@@ -39,5 +50,5 @@ DeleteWorkoutFunction:
   role: DeleteWorkoutFunctionRole
   events:
     - httpApi:
-        path: /{id}
+        path: /{id}/{date}
         method: delete

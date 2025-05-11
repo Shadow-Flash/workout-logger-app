@@ -197,3 +197,24 @@ export async function deleteUserData(userId: string) {
     throw new Error(error as string);
   }
 }
+
+/**
+ * Delete workout data from the DynamoDB table using primary key
+ * @param userId The user ID
+ * @param date The date
+ * @returns The response from DynamoDB
+ */
+export async function deleteWorkoutData(userId: string, date: string) {
+  const deleteParam: DeleteItemCommandInput = {
+    TableName: tableName,
+    Key: marshall({
+      UserId: userId,
+      Date: date,
+    }),
+  };
+  try {
+    return client.send(new DeleteItemCommand(deleteParam));
+  } catch (error) {
+    throw new Error(error as string);
+  }
+}

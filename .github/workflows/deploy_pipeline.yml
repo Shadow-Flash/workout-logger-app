@@ -31,10 +31,10 @@ jobs:
         run: |
           if [[ ${{ github.ref_name }} == 'main' ]]; then
             echo "STAGE=dev" >> $GITHUB_ENV
-            echo "ROLE=arn:aws:iam::797098543009:role/varun-github-access-role" >> $GITHUB_ENV
+            echo "ROLE=arn:aws:iam::7xxx9:role/varun-github-access-role" >> $GITHUB_ENV
           else
             echo "STAGE=prod" >> $GITHUB_ENV
-            echo "ROLE=arn:aws:iam::797098543009:role/varun-github-access-role" >> $GITHUB_ENV
+            echo "ROLE=arn:aws:iam::7xxx9:role/varun-github-access-role" >> $GITHUB_ENV
           fi
 
       - name: Configure AWS credentials

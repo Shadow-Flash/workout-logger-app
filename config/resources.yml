@@ -100,6 +100,34 @@ Resources:
                   - logs:PutLogEvents
                 Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-add-or-update-rep-set:*
 
+  DeleteAllWorkoutsFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ${sls:stage}-delete-all-workouts-function-role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: ${sls:stage}-delete-all-workouts-policy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:DeleteItem
+                  - dynamodb:Query
+                Resource: !GetAtt WorkoutLogTable.Arn
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-delete-all-workouts:*
+
   DeleteWorkoutFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -119,7 +147,6 @@ Resources:
               - Effect: Allow
                 Action:
                   - dynamodb:DeleteItem
-                  - dynamodb:Query
                 Resource: !GetAtt WorkoutLogTable.Arn
               - Effect: Allow
                 Action:

@@ -1,25 +1,26 @@
 {
-  "name": "mini_project",
+  "name": "workout-logger-app",
   "version": "1.0.0",
-  "description": "<!-- title: 'AWS Simple HTTP Endpoint example in NodeJS' description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.' layout: Doc framework: v3 platform: AWS language: nodeJS authorLink: 'https://github.com/serverless' authorName: 'Serverless, inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
-  "main": "index.js",
+  "description": "Basic CRUD API for logging daily workouts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "deploy": "eslint && sls deploy -s dev --verbose",
+    "validate": "eslint && sls print -s dev",
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Varun Gupta",
   "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.26.0",
     "@types/aws-lambda": "^8.10.149",
+    "@types/jest": "^29.5.14",
     "aws-lambda": "^1.0.7",
     "eslint": "^9.26.0",
     "globals": "^16.1.0",
-    "serverless-dynamodb-local": "^0.2.40",
+    "jest": "^29.7.0",
     "serverless-esbuild": "^1.55.0",
-    "serverless-offline": "^2.0.0",
-    "serverless-plugin-typescript": "^2.1.5",
+    "ts-jest": "^29.3.2",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.32.0"
   },
