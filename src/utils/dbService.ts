@@ -17,29 +17,12 @@ import {
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { nanoid } from "nanoid";
 import { logger } from "./logger";
+import { UserDataItem, WorkoutPlanItem, WorkoutLogItem } from "./types";
 import sampleExerciseData from "../data/exercise.json";
 
 // Initialize the DynamoDB client
 const client = new DynamoDBClient({ region: process.env.REGION });
 const tableName = process.env.TABLE_NAME;
-
-// Define the workout log item structure based on your table schema
-interface WorkoutPlanItem {
-  userId: string;
-  workoutPlan: Record<string, Record<string, number | string>>;
-  date: string;
-}
-
-interface WorkoutLogItem {
-  userId: string;
-  workoutPlan: Record<string, Record<string, number | string>>;
-}
-
-interface UserDataItem {
-  fullName: string;
-  gender: "M" | "F" | "O";
-  dob: string;
-}
 
 const getFormattedDate = () => new Date().toISOString().split("T")[0];
 /**
