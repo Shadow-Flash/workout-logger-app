@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { userIdSchema } from "../schemas/userIdSchema";
+import { userPkSchema } from "../schemas/userPkSchema";
 import { response } from "../utils/response";
 import { logger } from "../utils/logger";
-import { deleteUserData } from "../utils/dbService";
+import { deleteWorkoutData } from "../utils/dbService";
 
 export const handler = async (
   event: APIGatewayProxyEvent
@@ -13,17 +13,17 @@ export const handler = async (
 
   try {
     const pathParam = event.pathParameters;
-    const userId = userIdSchema.safeParse(pathParam);
+    const userPkData = userPkSchema.safeParse(pathParam);
 
-    if (userId.success) {
-      await deleteUserData(userId.data.id);
+    if (userPkData.success) {
+      await deleteWorkoutData(userPkData.data.id, userPkData.data.date);
       return response(200, {
-        message: "User data deleted successfully!",
+        message: "Workout data deleted successfully!",
       });
     } else {
-      const formattedErrors = {
-        [userId.error.issues[0].path.join(".")]: userId.error.issues[0].message,
-      };
+      const formattedErrors = userPkData.error.errors.map((err) => ({
+        [err.path.join(".")]: err.message,
+      }));
       return response(400, {
         message: "Validation failed!",
         errors: formattedErrors,
@@ -32,7 +32,7 @@ export const handler = async (
   } catch (error) {
     if (error instanceof Error) {
       return response(400, {
-        message: "Error while deleting a user",
+        message: "Error while deleting a workout",
         error: error.message,
       });
     }

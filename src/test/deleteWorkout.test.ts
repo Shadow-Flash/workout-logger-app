@@ -1,7 +1,7 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { handler } from "../functions/deleteAllWorkouts";
-import { userIdSchema } from "../schemas/userIdSchema";
-import { deleteUserData } from "../utils/dbService";
+import { handler } from "../functions/deleteWorkout";
+import { userPkSchema } from "../schemas/userPkSchema";
+import { deleteWorkoutData } from "../utils/dbService";
 import { logger } from "../utils/logger";
 
 // Mock dependencies
@@ -12,16 +12,16 @@ jest.mock("../utils/logger", () => ({
 }));
 
 jest.mock("../utils/dbService", () => ({
-  deleteUserData: jest.fn(),
+  deleteWorkoutData: jest.fn(),
 }));
 
-jest.mock("../schemas/userIdSchema", () => ({
-  userIdSchema: {
+jest.mock("../schemas/userPkSchema", () => ({
+  userPkSchema: {
     safeParse: jest.fn(),
   },
 }));
 
-describe("deleteAllWorkouts lambda handler", () => {
+describe("deleteWorkout lambda handler", () => {
   // Reset all mocks before each test
   beforeEach(() => {
     jest.clearAllMocks();
@@ -46,43 +46,43 @@ describe("deleteAllWorkouts lambda handler", () => {
     expect(logger.info).toHaveBeenCalledWith(mockEvent);
   });
 
-  test("should return 200 when user data is successfully deleted", async () => {
+  test("should return 200 when workout is successfully deleted", async () => {
     // Mock path parameters
-    const mockPathParams = { id: "user123" };
+    const mockPathParams = { id: "user123", date: "2025-05-10" };
     const mockEvent = createMockEvent(mockPathParams) as APIGatewayProxyEvent;
 
     // Mock successful validation
-    (userIdSchema.safeParse as jest.Mock).mockReturnValue({
+    (userPkSchema.safeParse as jest.Mock).mockReturnValue({
       success: true,
       data: mockPathParams,
     });
 
     // Mock successful database operation
-    (deleteUserData as jest.Mock).mockResolvedValue(undefined);
+    (deleteWorkoutData as jest.Mock).mockResolvedValue(undefined);
 
     // Execute handler
     const result = await handler(mockEvent);
 
     // Assertions
     expect(logger.info).toHaveBeenCalledWith(mockEvent);
-    expect(userIdSchema.safeParse).toHaveBeenCalledWith(mockPathParams);
-    expect(deleteUserData).toHaveBeenCalledWith("user123");
+    expect(userPkSchema.safeParse).toHaveBeenCalledWith(mockPathParams);
+    expect(deleteWorkoutData).toHaveBeenCalledWith("user123", "2025-05-10");
     expect(result.statusCode).toBe(200);
     expect(JSON.parse(result.body)).toEqual({
-      message: "User data deleted successfully!",
+      message: "Workout data deleted successfully!",
     });
   });
 
   test("should return 400 when validation fails", async () => {
     // Mock path parameters with invalid data
-    const mockPathParams = { id: "" }; // Assuming empty ID is invalid
+    const mockPathParams = { id: "user123", date: "invalid-date" };
     const mockEvent = createMockEvent(mockPathParams) as APIGatewayProxyEvent;
 
     // Mock validation failure
-    (userIdSchema.safeParse as jest.Mock).mockReturnValue({
+    (userPkSchema.safeParse as jest.Mock).mockReturnValue({
       success: false,
       error: {
-        issues: [{ path: ["id"], message: "ID cannot be empty" }],
+        errors: [{ path: ["date"], message: "Invalid date format" }],
       },
     });
 
@@ -91,57 +91,57 @@ describe("deleteAllWorkouts lambda handler", () => {
 
     // Assertions
     expect(logger.info).toHaveBeenCalledWith(mockEvent);
-    expect(userIdSchema.safeParse).toHaveBeenCalledWith(mockPathParams);
-    expect(deleteUserData).not.toHaveBeenCalled();
+    expect(userPkSchema.safeParse).toHaveBeenCalledWith(mockPathParams);
+    expect(deleteWorkoutData).not.toHaveBeenCalled();
     expect(result.statusCode).toBe(400);
     expect(JSON.parse(result.body)).toEqual({
       message: "Validation failed!",
-      errors: { id: "ID cannot be empty" },
+      errors: [{ date: "Invalid date format" }],
     });
   });
 
   test("should handle Error instances specifically", async () => {
     // Mock path parameters
-    const mockPathParams = { id: "user123" };
+    const mockPathParams = { id: "user123", date: "2025-05-10" };
     const mockEvent = createMockEvent(mockPathParams) as APIGatewayProxyEvent;
 
     // Mock successful validation
-    (userIdSchema.safeParse as jest.Mock).mockReturnValue({
+    (userPkSchema.safeParse as jest.Mock).mockReturnValue({
       success: true,
       data: mockPathParams,
     });
 
     // Mock database operation that throws an Error
     const errorMessage = "Database connection failed";
-    (deleteUserData as jest.Mock).mockRejectedValue(new Error(errorMessage));
+    (deleteWorkoutData as jest.Mock).mockRejectedValue(new Error(errorMessage));
 
     // Execute handler
     const result = await handler(mockEvent);
 
     // Assertions
     expect(logger.info).toHaveBeenCalledWith(mockEvent);
-    expect(userIdSchema.safeParse).toHaveBeenCalledWith(mockPathParams);
-    expect(deleteUserData).toHaveBeenCalledWith("user123");
+    expect(userPkSchema.safeParse).toHaveBeenCalledWith(mockPathParams);
+    expect(deleteWorkoutData).toHaveBeenCalledWith("user123", "2025-05-10");
     expect(result.statusCode).toBe(400);
     expect(JSON.parse(result.body)).toEqual({
-      message: "Error while deleting a user",
+      message: "Error while deleting a workout",
       error: errorMessage,
     });
   });
 
   test("should return 500 for unknown errors", async () => {
     // Mock path parameters
-    const mockPathParams = { id: "user123" };
+    const mockPathParams = { id: "user123", date: "2025-05-10" };
     const mockEvent = createMockEvent(mockPathParams) as APIGatewayProxyEvent;
 
     // Mock successful validation
-    (userIdSchema.safeParse as jest.Mock).mockReturnValue({
+    (userPkSchema.safeParse as jest.Mock).mockReturnValue({
       success: true,
       data: mockPathParams,
     });
 
     // Mock database operation that throws a non-Error object
-    (deleteUserData as jest.Mock).mockRejectedValue("Unknown error type");
+    (deleteWorkoutData as jest.Mock).mockRejectedValue("Unknown error type");
 
     // Execute handler
     const result = await handler(mockEvent);
