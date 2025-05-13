@@ -5,8 +5,10 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "deploy": "eslint && sls deploy -s dev --verbose",
-    "validate": "eslint && sls print -s dev",
+    "deploy": "npm run test && npm run validate && eslint && sls deploy -s dev --param='region=us-east-1' --verbose",
+    "deploy:dev": "sls deploy -s dev --param='region=us-east-1' --verbose",
+    "deploy:prod": "sls deploy -s prod --param='region=us-east-1' --verbose",
+    "validate": "eslint && sls print -s dev --param='region=us-east-1'",
     "test": "jest",
     "test:coverage": "jest --coverage"
   },

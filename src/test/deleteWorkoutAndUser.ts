@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { handler } from "../functions/deleteWorkout";
+import { handler } from "../functions/deleteWorkoutAndUser";
 import { userPkSchema } from "../schemas/userPkSchema";
 import { deleteWorkoutData } from "../utils/dbService";
 import { logger } from "../utils/logger";

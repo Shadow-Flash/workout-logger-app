@@ -128,10 +128,10 @@ Resources:
                   - logs:PutLogEvents
                 Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-delete-all-workouts:*
 
-  DeleteWorkoutFunctionRole:
+  DeleteWorkoutAndUserFunctionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: ${sls:stage}-delete-workout-function-role
+      RoleName: ${sls:stage}-delete-workout-and-user-function-role
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -140,7 +140,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        - PolicyName: ${sls:stage}-delete-workout-policy
+        - PolicyName: ${sls:stage}-delete-workout-and-user-policy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -153,4 +153,4 @@ Resources:
                   - logs:CreateLogGroup
                   - logs:CreateLogStream
                   - logs:PutLogEvents
-                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-delete-workout:*
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${sls:stage}-delete-workout-and-user:*

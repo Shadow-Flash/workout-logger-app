@@ -42,12 +42,12 @@ DeleteAllWorkoutsFunction:
         path: /{id}
         method: delete
 
-DeleteWorkoutFunction:
-  name: ${sls:stage}-delete-workout
-  handler: src/functions/deleteWorkout.handler
+DeleteWorkoutAndUserFunction:
+  name: ${sls:stage}-delete-workout-and-user
+  handler: src/functions/deleteWorkoutAndUser.handler
   layers:
     - !Ref HelperResourcesLambdaLayer
-  role: DeleteWorkoutFunctionRole
+  role: DeleteWorkoutAndUserFunctionRole
   events:
     - httpApi:
         path: /{id}/{date}

@@ -5,3 +5,7 @@ jspm_packages
 # Serverless directories
 .serverless
 event.json
+
+# not passing coverage report intentionally
+./coverage
+./coverage/*

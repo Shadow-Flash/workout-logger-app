@@ -1,92 +1,189 @@
-<!--
-title: 'AWS Simple HTTP Endpoint example in NodeJS'
-description: 'This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.'
-layout: Doc
-framework: v3
-platform: AWS
-language: nodeJS
-authorLink: 'https://github.com/serverless'
-authorName: 'Serverless, inc.'
-authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
--->
+# Workout Logger API
 
-# Serverless Framework Node HTTP API on AWS
+A serverless Node.js CRUD API for logging and tracking workouts, built with AWS Lambda, API Gateway, and DynamoDB using the Serverless Framework.
 
-This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
+## Prerequisites
 
-This template does not include any kind of persistence (database). For more advanced examples, check out the [serverless/examples repository](https://github.com/serverless/examples/) which includes Typescript, Mongo, DynamoDB and other examples.
+- Node.js (v20.x)
+- AWS CLI configured with appropriate credentials
+- Serverless Framework CLI
+- npm package manager (10.9.2)
 
-## Usage
+## Project Setup
 
-### Deployment
+1. Clone the repository
+2. You can choose either of one 2.1 or 2.2, The script mentioned in point 2.2 is for easier deployment.
+   Change region before you proceed further in package.json
+   
+   2.1. Install dependencies:
+
+    ```bash
+    # Install project dependencies
+    npm install
+
+    # Install serverless framework globally (if not already installed)
+    npm install -g serverless
+
+    # Once your aws credentials are in place, run:
+    npm run deploy
+    ```
+   2.2. Just run the script:
+
+    ```bash
+    # Before running the script put AWS credentials in .env file:
+    bash init-deploy.sh
+    ```
+
+## Project Structure
 
 ```
-$ serverless deploy
+├── config/               # Serverless configuration files
+│   ├── functions.yml    # Lambda functions configuration
+│   ├── layers.yml       # Lambda layers configuration
+│   ├── plugins.yml      # Serverless plugins
+│   ├── provider.yml     # AWS provider configuration
+│   └── resources.yml    # AWS resources (DynamoDB, IAM roles)
+├── layer/               # Lambda layer containing shared dependencies
+├── src/
+│   ├── functions/       # Lambda function handlers
+│   ├── schemas/         # Zod validation schemas
+│   ├── test/           # Test files
+│   └── utils/          # Shared utilities
+└── serverless.yml      # Main serverless configuration
 ```
 
-After deploying, you should see output similar to:
+## Development
+Once project is deployed on your aws account you can:
+1. directly deploy using 
+```bash
+npm run validate && npm run deploy:dev
+```
+
+2. use github action (CI/CD pipeline) to deploy on main branch as stage dev and production branch as stage prod
+You can pass your aws cedential secrets from github secrets. Below are the keys that needs to be stored in secrets
+```bash
+  STAGE
+  AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY
+  
+```
+
+### Testing
+
+The project uses Jest for testing. To run tests:
 
 ```bash
-Deploying aws-node-http-api-project to stage dev (us-east-1)
-
-✔ Service deployed to stack aws-node-http-api-project-dev (152s)
-
-endpoint: GET - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/
-functions:
-  hello: aws-node-http-api-project-dev-hello (1.9 kB)
+npm test          # Run all tests
+npm test -- --coverage  # Run tests with coverage report
 ```
 
-_Note_: In current form, after deployment, your API is public and can be invoked by anyone. For production deployments, you might want to configure an authorizer. For details on how to do that, refer to [http event docs](https://www.serverless.com/framework/docs/providers/aws/events/apigateway/).
+## API Endpoints
 
-### Invocation
+The API provides the following endpoints:
 
-After successful deployment, you can call the created application via HTTP:
+### User Management
+- **POST /user**
+  - Create a new user
+  - Body: 
+  ```bash
+   { "fullName": string, "gender": "M"|"F"|"O", "dob": "YYYY-MM-DD" }
+  ```
+  - Response:
+  ```bash
+   {message: User created successfully!!, userId: string}
+   ```
+
+### Workout Management
+- **GET /{id}/{date}**
+  - Get workout details for a specific date
+  - Parameters:
+    - id: `userId`
+    - date: `YYYY-MM-DD` Workout Date
+  - Response: 
+  ```bash
+  { userId: string, "workoutPlan": { "exerciseName": { "sets": number, "reps": number, "weight": number, metric: "KGS"|"LBS"|"BODYWEIGHT" }}}
+  ```
+
+- **PUT /{id}/{date}**
+  - Add or update workout details
+  - Parameters:
+    - id: `userId`
+    - date: `YYYY-MM-DD` Workout Date
+  - Body: 
+  ```bash
+  {"workoutPlan": { "exerciseName": { "sets": number, "reps": number, "weight": number, metric: "KGS"|"LBS"|"BODYWEIGHT" }}}
+  ```
+  - Response: 
+  ```bash
+  { message: Workout Updated !!, data: {"WorkoutPlan": { "exerciseName": { "sets": number, "reps": number, "weight": number, metric: "KGS"|"LBS"|"BODYWEIGHT" }}}}
+  ```
+
+- **DELETE /{id}/{date}**
+  - Delete a specific workout
+  - Parameters:
+    - id: `userId`
+    - date: `YYYY-MM-DD` Workout Date
+  - Response: 
+  ```bash
+  {"message":"Workout data deleted successfully!"}
+  ```
+
+- **DELETE /{id}**
+  - Delete all workout and user itself
+  - Parameters:
+    - id: `userId`
+  - Response: 
+  ```bash
+  {"message":"User data deleted successfully!"}
+  ```
+
+
+## Deployment
+
+Deploy to AWS:
 
 ```bash
-curl https://xxxxxxx.execute-api.us-east-1.amazonaws.com/
+npm run deploy:dev    # Deploy to dev stage
+npm run deploy:prod    # Deploy to prod stage
 ```
+After successful deployment, you'll receive the API endpoint URLs.
 
-Which should result in response similar to the following (removed `input` content for brevity):
+### Environment Configuration
 
-```json
-{
-  "message": "Go Serverless v2.0! Your function executed successfully!",
-  "input": {
-    ...
-  }
-}
-```
+The application uses the following environment variables:
+- TABLE_NAME: DynamoDB table name (auto-configured during deployment)
+- REGION: AWS region (configured in provider.yml)
 
-### Local development
+## Database Schema
 
-You can invoke your function locally by using the following command:
+The application uses DynamoDB with the following schema:
 
-```bash
-serverless invoke local --function hello
-```
+### Workout Log Table
+- Primary Key: UserId (String)
+- Sort Key: Date (String)
+- Attributes:
+  - WorkoutPlan: Object of exercise records
+  - DateOfBirth: YYYY-MM-DD string
+  - FullName: string
+  - Gender: string
 
-Which should result in response similar to the following:
+## Security
 
-```
-{
-  "statusCode": 200,
-  "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
-}
-```
+- API endpoints are public by default. For production, implement an authorizer
+- IAM roles are configured per function with least privilege access
+- DynamoDB table uses on-demand capacity mode
+- While deploying please make sure you have these services roles as well:
+  - cloudformation
+  - lambda
+  - cloudwatch
+  - dynamodb
+  - s3
+  - api gateway
 
+## Contributing
 
-Alternatively, it is also possible to emulate API Gateway and Lambda locally by using `serverless-offline` plugin. In order to do that, execute the following command:
+1. Create a feature branch
+2. Make your changes
+3. Write/update tests
+4. Submit a pull request
 
-```bash
-serverless plugin install -n serverless-offline
-```
-
-It will add the `serverless-offline` plugin to `devDependencies` in `package.json` file as well as will add it to `plugins` in `serverless.yml`.
-
-After installation, you can start local emulation with:
-
-```
-serverless offline
-```
-
-To learn more about the capabilities of `serverless-offline`, please refer to its [GitHub repository](https://github.com/dherault/serverless-offline).

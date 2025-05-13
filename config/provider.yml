@@ -1,6 +1,7 @@
 name: aws
 runtime: nodejs20.x
-region: ap-south-1
+#Change region before you deploy
+region: ${param:region}
 httpApi:
   cors: true
 environment:
